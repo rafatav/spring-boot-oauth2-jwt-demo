@@ -3,6 +3,7 @@ package com.devsuperior.demo.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,8 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
+	@PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Product entity = productRepository.findById(id).get();
@@ -27,6 +29,7 @@ public class ProductService {
 		return productRepository.findAll().stream().map(x -> new ProductDTO(x)).toList();
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
